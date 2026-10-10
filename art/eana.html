@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EANA artwork | Afonso Mota</title>
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/site.css">
+  <script src="../assets/site.js" defer></script>
+  <style>
+    * { box-sizing: border-box; }
+    html { color-scheme: dark; background: #000; color: #f6f5f2; font: 14px/1.5 "Segoe UI", Arial, sans-serif; }
+    body { margin: 0; background: #000; }
+    body::before { display: none; }
+    nav { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 20px; padding: 20px; position: sticky; top: 0; background: #000e; }
+    a { color: inherit; text-underline-offset: 4px; }
+    a:focus-visible { outline: 3px solid #ff9a64; outline-offset: 5px; }
+    h1 { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+    figure { margin: 0; padding: 0 20px 20px; }
+    img { display: block; width: auto; height: auto; max-width: 100%; max-height: calc(100svh - 90px); margin: auto; background: #000; }
+    #full-size:target main img { max-width: none; max-height: none; margin: 0; }
+  </style>
+</head>
+<body id="full-size">
+  <nav aria-label="Artwork controls"><a href="../art.html">← Back to Art</a><span><a href="#full-size">Original size</a> · <a href="#">Fit to screen</a></span></nav>
+  <main><h1>EANA artwork</h1><figure><img src="../assets/art/EANA_poster_background_transparent.png" width="5432" height="7680" alt="A red star above a blue planetary horizon, with a ringed world in a field of stars" fetchpriority="high"></figure></main>
+</body>
+</html>

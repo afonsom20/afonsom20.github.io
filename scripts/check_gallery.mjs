@@ -37,7 +37,7 @@ function setup(reduced = false, random = () => .999) {
   const motion = { ...element(), matches: reduced };
   const document = { ...element(), hidden: false,
     documentElement: { classList: { add() {} }, dataset: {} },
-    getElementById: () => null,
+    getElementById: () => null, querySelectorAll: () => [],
     querySelector: selector => selector === '[data-outreach-gallery]' ? gallery : null,
   };
   let tick;

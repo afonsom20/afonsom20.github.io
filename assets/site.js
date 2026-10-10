@@ -1,8 +1,17 @@
 (() => {
   const root = document.documentElement;
   root.classList.add('js');
-  try { root.dataset.theme = localStorage.getItem('afonso-theme') === 'light' ? 'light' : 'dark'; }
-  catch { root.dataset.theme = 'dark'; }
+  root.dataset.theme = 'dark';
+  const itchEmbed = document.querySelector('[data-itch-embed]');
+  const updateItchTheme = () => {
+    if (!itchEmbed) return;
+    const light = root.dataset.theme === 'light';
+    const colors = light
+      ? { bg_color: 'f0eeea', fg_color: '252427', link_color: 'a54116', border_color: 'd9d6d0' }
+      : { bg_color: '222224', fg_color: 'f6f5f2', link_color: 'ff9a64', border_color: '3b3b40' };
+    itchEmbed.src = 'https://itch.io/embed/1162797?' + new URLSearchParams(colors);
+  };
+  updateItchTheme();
   const themeButton = document.querySelector('[data-theme-toggle]');
   if (themeButton) {
     const updateLabel = () => {
@@ -16,8 +25,8 @@
     updateLabel();
     themeButton.addEventListener('click', () => {
       root.dataset.theme = root.dataset.theme === 'light' ? 'dark' : 'light';
-      try { localStorage.setItem('afonso-theme', root.dataset.theme); } catch { /* Theme works without storage. */ }
       updateLabel();
+      updateItchTheme();
     });
   }
   const menuButton = document.querySelector('[data-menu-toggle]');
@@ -42,12 +51,53 @@
     });
     navigation.addEventListener('click', event => { if (event.target.closest('a')) closeMenu(); });
   }
+  let imageViewer = null;
+  const pictures = [...document.querySelectorAll('main img')];
+  if (pictures.length) {
+    imageViewer = document.createElement('dialog');
+    imageViewer.className = 'image-viewer';
+    imageViewer.setAttribute('aria-label', 'Enlarged image');
+    imageViewer.innerHTML = '<figure><img alt=""></figure>';
+    document.body.append(imageViewer);
+    const enlarged = imageViewer.querySelector('img');
+    let opener;
+    imageViewer.addEventListener('click', () => imageViewer.close());
+    imageViewer.addEventListener('close', () => {
+      root.classList.remove('image-viewing');
+      enlarged.removeAttribute('src');
+      opener.focus({ preventScroll: true });
+    });
+    pictures.forEach(picture => {
+      const link = picture.closest('a');
+      const control = link || picture;
+      control.setAttribute('role', 'button');
+      control.setAttribute('aria-haspopup', 'dialog');
+      control.setAttribute('aria-label', 'Enlarge image: ' + picture.alt);
+      control.tabIndex = 0;
+      const openImage = event => {
+        event.preventDefault();
+        opener = control;
+        enlarged.width = picture.naturalWidth || picture.width;
+        enlarged.height = picture.naturalHeight || picture.height;
+        enlarged.alt = picture.alt;
+        enlarged.src = picture.dataset.fullImage || (link && /\.(png|jpe?g|svg|webp)(?:[?#]|$)/i.test(link.href) ? link.href : picture.currentSrc || picture.src);
+        imageViewer.showModal();
+        root.classList.add('image-viewing');
+      };
+      control.addEventListener('click', openImage);
+      control.addEventListener('keydown', event => {
+        if (event.key === 'Enter' || event.key === ' ') openImage(event);
+      });
+    });
+  }
+
   const carousel = document.querySelector('[data-carousel]');
   if (carousel) {
     const slides = [...carousel.querySelectorAll('[data-slide]')];
     const rotationButton = carousel.querySelector('[data-rotation]');
     let index = 0;
-    let paused = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let paused = reducedMotion.matches;
     let hovered = false;
     const showSlide = next => {
       index = (next + slides.length) % slides.length;
@@ -77,10 +127,14 @@
         showSlide(index + (event.key === 'ArrowRight' ? 1 : -1));
       }
     });
+    reducedMotion.addEventListener('change', () => {
+      if (reducedMotion.matches) { paused = true; updateRotationLabel(); }
+    });
+    showSlide(0);
     updateRotationLabel();
     setInterval(() => {
-      if (!paused && !hovered && !document.hidden) showSlide(index + 1);
-    }, 5000);
+      if (!paused && !hovered && !document.hidden && !imageViewer?.open) showSlide(index + 1);
+    }, Number(carousel.dataset.interval) || 5000);
   }
 
   const gallery = document.querySelector('[data-outreach-gallery]');
@@ -98,7 +152,10 @@
     let hovered = false;
     let shifting = false;
     const updateVisiblePhotos = () => {
-      [...track.children].forEach((photo, index) => photo.setAttribute('aria-hidden', String(index >= 3)));
+      [...track.children].forEach((photo, index) => {
+        photo.setAttribute('aria-hidden', String(index >= 3));
+        photo.tabIndex = index < 3 ? 0 : -1;
+      });
     };
     const updateRotationLabel = () => {
       rotationButton.textContent = paused ? 'Play' : 'Pause';
@@ -166,7 +223,7 @@
     updateVisiblePhotos();
     updateRotationLabel();
     setInterval(() => {
-      if (paused || hovered || document.hidden || shifting) return;
+      if (paused || hovered || document.hidden || imageViewer?.open || shifting) return;
       shiftPhotos(1);
     }, 3000);
   }
