@@ -83,6 +83,94 @@
     }, 5000);
   }
 
+  const gallery = document.querySelector('[data-outreach-gallery]');
+  if (gallery) {
+    const track = gallery.querySelector('[data-gallery-track]');
+    const photos = [...track.children];
+    for (let index = photos.length - 1; index > 0; index--) {
+      const other = Math.floor(Math.random() * (index + 1));
+      [photos[index], photos[other]] = [photos[other], photos[index]];
+    }
+    photos.forEach(photo => track.append(photo));
+    const rotationButton = gallery.querySelector('[data-gallery-rotation]');
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let paused = reducedMotion.matches;
+    let hovered = false;
+    let shifting = false;
+    const updateVisiblePhotos = () => {
+      [...track.children].forEach((photo, index) => photo.setAttribute('aria-hidden', String(index >= 3)));
+    };
+    const updateRotationLabel = () => {
+      rotationButton.textContent = paused ? 'Play' : 'Pause';
+      rotationButton.setAttribute('aria-label', `${paused ? 'Resume' : 'Pause'} automatic outreach photo changes`);
+    };
+    const finishShift = () => {
+      track.style.transition = 'none';
+      if (shifting === 1) track.append(track.firstElementChild);
+      track.style.transform = '';
+      updateVisiblePhotos();
+      // Apply the reset before restoring the next animated shift.
+      track.getBoundingClientRect();
+      track.style.transition = '';
+      shifting = false;
+    };
+    track.addEventListener('transitionend', event => {
+      if (event.target === track && event.propertyName === 'transform' && shifting) finishShift();
+    });
+    const shiftPhotos = direction => {
+      if (shifting) return;
+      shifting = direction;
+      const distance = track.children[1].getBoundingClientRect().left - track.children[0].getBoundingClientRect().left;
+      if (direction === -1) {
+        track.style.transition = 'none';
+        track.prepend(track.lastElementChild);
+        track.style.transform = `translateX(-${distance}px)`;
+        track.getBoundingClientRect();
+        track.style.transition = '';
+        track.style.transform = '';
+      } else {
+        track.style.transform = `translateX(-${distance}px)`;
+      }
+      if (reducedMotion.matches) finishShift();
+    };
+    const manualShift = direction => {
+      paused = true;
+      updateRotationLabel();
+      shiftPhotos(direction);
+    };
+    ['previous', 'next'].forEach(control => {
+      const button = gallery.querySelector(`[data-gallery-${control}]`);
+      button.hidden = false;
+      button.addEventListener('click', () => manualShift(control === 'previous' ? -1 : 1));
+    });
+    gallery.addEventListener('keydown', event => {
+      if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+        event.preventDefault();
+        manualShift(event.key === 'ArrowRight' ? 1 : -1);
+      }
+    });
+    rotationButton.hidden = false;
+    rotationButton.addEventListener('click', () => { paused = !paused; updateRotationLabel(); });
+    gallery.addEventListener('mouseenter', () => { hovered = true; });
+    gallery.addEventListener('mouseleave', () => { hovered = false; });
+    gallery.addEventListener('focusin', event => {
+      if (event.target !== rotationButton) { paused = true; updateRotationLabel(); }
+    });
+    reducedMotion.addEventListener('change', () => {
+      if (reducedMotion.matches) {
+        paused = true;
+        if (shifting) finishShift();
+        updateRotationLabel();
+      }
+    });
+    updateVisiblePhotos();
+    updateRotationLabel();
+    setInterval(() => {
+      if (paused || hovered || document.hidden || shifting) return;
+      shiftPhotos(1);
+    }, 3000);
+  }
+
   const publicationList = document.querySelector('[data-publications]');
   if (publicationList) {
     const filters = [...document.querySelectorAll('[data-publication-filter]')];

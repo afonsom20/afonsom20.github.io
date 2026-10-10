@@ -53,7 +53,24 @@
 .publication-filters button { border: 0; background: transparent; color: var(--muted); border-radius: 6px; padding: 12px 20px; font-size: 14px; }
 .publication-filters button[aria-pressed="true"] { background: var(--button); color: #21140e; font-weight: 600; }
 .publication-filters button:hover:not([aria-pressed="true"]) { color: var(--text); }
-.outreach-feature .outreach-photo { object-position: 35% center; max-height: none; }
+.outreach-feature { grid-template-columns: 1fr; }
+.page-heading h1.eyebrow { font-size: 11px; letter-spacing: .16em; line-height: 1.7; margin: 0 0 20px; }
+.outreach-intro { display: grid; grid-template-columns: minmax(0, 1fr); gap: 32px; max-width: none; }
+.outreach-intro-copy p { color: var(--muted); font-size: 18px; max-width: 670px; }
+.outreach-intro-photo img { width: 100%; height: auto; border-radius: 14px; }
+.outreach-intro-photo figcaption { color: var(--muted); font-size: 12px; line-height: 1.6; margin-top: 12px; }
+.outreach-card-heading { display: grid; grid-template-columns: minmax(0, 1fr) 140px; column-gap: 28px; margin-bottom: 24px; align-items: center; }
+.outreach-card-heading h2 { margin: 18px 0 0; }
+.outreach-feature .outreach-logo { grid-column: 2; grid-row: 1 / 3; width: 140px; height: 140px; min-height: 0; max-height: none; object-fit: contain; object-position: center; }
+.outreach-event { margin-block: 32px 64px; }
+.feature-copy p a { color: var(--accent); }
+.outreach-gallery-stage { position: relative; }
+.outreach-gallery .carousel-arrow { width: 44px; height: 44px; }
+.outreach-gallery-window { overflow-x: auto; border-radius: 14px; }
+.js .outreach-gallery-window { overflow: hidden; }
+.outreach-gallery-track { display: flex; gap: 18px; transition: transform .6s ease; }
+.outreach-gallery-track img { flex: 0 0 calc((100% - 36px) / 3); width: calc((100% - 36px) / 3); min-width: 0; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 14px; }
+.gallery-rotation { display: flex; margin: 18px 0 0 auto; padding: 8px 18px; }
 
 /* Read the uploaded PDF directly, with open/download links for other viewers. */
 .cv-heading { max-width: none; padding-bottom: 30px; }
@@ -62,6 +79,14 @@
 .cv-document { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin-bottom: 72px; background: var(--surface); }
 .cv-embed { display: block; width: 100%; height: max(700px, 85vh); border: 0; }
 .cv-embed p { padding: 30px; color: var(--text); }
+@media (max-width: 800px) {
+  .header-inner { flex-wrap: wrap; padding-block: 16px; gap: 16px; }
+  .header-actions { margin-left: auto; }
+  .site-nav { order: 3; width: 100%; margin-left: 0; justify-content: space-between; }
+  .js .menu-button { display: grid; }
+  .js .site-nav { display: none; }
+  .js .site-nav.is-open { display: flex; }
+}
 @media (max-width: 700px) {
   .header-inner { gap: 16px; }
   .site-nav { flex-wrap: wrap; gap: 12px 24px; }
@@ -71,5 +96,15 @@
   .cv-tools { gap: 16px; }
   .cv-document { margin-bottom: 52px; }
   .cv-embed { height: 75vh; min-height: 550px; }
+  .outreach-gallery-track { gap: 8px; }
+  .outreach-gallery-track img { flex-basis: calc((100% - 16px) / 3); width: calc((100% - 16px) / 3); border-radius: 8px; }
+  .outreach-feature .feature-copy { padding: 24px; }
+  .outreach-intro { gap: 24px; }
+  .outreach-intro-copy p { font-size: 16px; }
+  .outreach-card-heading { grid-template-columns: minmax(0, 1fr) 84px; column-gap: 12px; }
+  .outreach-card-heading h2 { grid-column: 1 / -1; font-size: clamp(26px, 7vw, 32px); }
+  .outreach-feature .outreach-logo { grid-row: 1; width: 84px; height: 84px; }
+  .outreach-card-heading .eyebrow { letter-spacing: .1em; }
+  .outreach-event { margin-block: 24px 48px; }
 }
-@media (prefers-reduced-motion: reduce) { .js .carousel-slide { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .js .carousel-slide, .outreach-gallery-track { transition: none; } }
