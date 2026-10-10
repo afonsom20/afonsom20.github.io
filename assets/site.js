@@ -137,7 +137,7 @@
     }, Number(carousel.dataset.interval) || 5000);
   }
 
-  const gallery = document.querySelector('[data-outreach-gallery]');
+  const gallery = document.querySelector('[data-outreach-gallery]') || document.querySelector('[data-proxima-gallery]');
   if (gallery) {
     const track = gallery.querySelector('[data-gallery-track]');
     const photos = [...track.children];
@@ -159,7 +159,7 @@
     };
     const updateRotationLabel = () => {
       rotationButton.textContent = paused ? 'Play' : 'Pause';
-      rotationButton.setAttribute('aria-label', `${paused ? 'Resume' : 'Pause'} automatic outreach photo changes`);
+      rotationButton.setAttribute('aria-label', `${paused ? 'Resume' : 'Pause'} automatic ${gallery.dataset.galleryName || 'outreach photo'} changes`);
     };
     const finishShift = () => {
       track.style.transition = 'none';
@@ -226,50 +226,6 @@
       if (paused || hovered || document.hidden || imageViewer?.open || shifting) return;
       shiftPhotos(1);
     }, 3000);
-  }
-
-  const proximaStills = document.querySelector('.proxima-stills');
-  if (proximaStills && proximaStills.children.length > 1) {
-    const rotationButton = document.querySelector('[data-proxima-rotation]');
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    let paused = reducedMotion.matches;
-    let hovered = false;
-    let previousTime;
-    let progress = 0;
-    const updateRotationLabel = () => {
-      rotationButton.textContent = paused ? 'Play' : 'Pause';
-      rotationButton.setAttribute('aria-label', `${paused ? 'Resume' : 'Pause'} automatic Proxima artwork scrolling`);
-    };
-    const pause = () => { paused = true; updateRotationLabel(); };
-    rotationButton.hidden = false;
-    rotationButton.addEventListener('click', () => { paused = !paused; updateRotationLabel(); });
-    proximaStills.addEventListener('mouseenter', () => { hovered = true; });
-    proximaStills.addEventListener('mouseleave', () => { hovered = false; });
-    proximaStills.addEventListener('focusin', pause);
-    proximaStills.addEventListener('pointerdown', pause);
-    reducedMotion.addEventListener('change', () => { if (reducedMotion.matches) pause(); });
-    proximaStills.classList.add('is-scrolling');
-    updateRotationLabel();
-    const scroll = time => {
-      const elapsed = previousTime === undefined ? 0 : Math.min(time - previousTime, 100);
-      previousTime = time;
-      if (!paused && !hovered && !document.hidden && !imageViewer?.open) {
-        // Carry fractional pixels so the speed stays at 20px/s on every display.
-        progress += elapsed * .02;
-        const pixels = Math.floor(progress);
-        progress -= pixels;
-        proximaStills.scrollLeft += pixels;
-        const distance = proximaStills.children[1].getBoundingClientRect().left - proximaStills.children[0].getBoundingClientRect().left;
-        // Reuse the original images and their viewer controls for a seamless loop.
-        while (distance > 0 && proximaStills.scrollLeft >= distance) {
-          const position = proximaStills.scrollLeft - distance;
-          proximaStills.append(proximaStills.firstElementChild);
-          proximaStills.scrollLeft = position;
-        }
-      }
-      requestAnimationFrame(scroll);
-    };
-    requestAnimationFrame(scroll);
   }
 
   const publicationList = document.querySelector('[data-publications]');

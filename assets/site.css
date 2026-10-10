@@ -88,7 +88,9 @@ body::before {
 .outreach-gallery-window { overflow-x: auto; border-radius: 14px; }
 .js .outreach-gallery-window { overflow: hidden; }
 .outreach-gallery-track { display: flex; gap: 18px; transition: transform .6s ease; }
-.outreach-gallery-track img { flex: 0 0 calc((100% - 36px) / 3); width: calc((100% - 36px) / 3); min-width: 0; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 14px; }
+.outreach-gallery-track > * { flex: 0 0 calc((100% - 36px) / 3); width: calc((100% - 36px) / 3); min-width: 0; }
+.outreach-gallery-track img { aspect-ratio: 4 / 3; object-fit: cover; border-radius: 14px; }
+.outreach-gallery-track a img { width: 100%; }
 .gallery-rotation { display: flex; margin: 18px 0 0 auto; padding: 8px 18px; }
 
 /* Read the uploaded PDF directly, with open/download links for other viewers. */
@@ -116,7 +118,8 @@ body::before {
   .cv-document { margin-bottom: 52px; }
   .cv-embed { height: 75vh; min-height: 550px; }
   .outreach-gallery-track { gap: 8px; }
-  .outreach-gallery-track img { flex-basis: calc((100% - 16px) / 3); width: calc((100% - 16px) / 3); border-radius: 8px; }
+  .outreach-gallery-track > * { flex-basis: calc((100% - 16px) / 3); width: calc((100% - 16px) / 3); }
+  .outreach-gallery-track img { border-radius: 8px; }
   .outreach-feature .feature-copy { padding: 24px; }
   .outreach-intro { gap: 24px; }
   .outreach-intro-copy p { font-size: 16px; }
@@ -147,7 +150,7 @@ body::before {
 .art-gallery .carousel-slide img { width: auto; height: auto; max-width: 100%; max-height: min(75svh, 800px); flex-shrink: 0; margin: auto; border: 1px solid var(--line); border-radius: 12px; }
 .art-gallery .carousel-arrow { top: 50%; width: 46px; height: 46px; }
 .art-playback { display: flex; align-items: center; justify-content: flex-end; gap: 22px; margin-top: 16px; color: var(--muted); font-size: 12px; }
-.art-playback .button, .proxima-stills-controls .button { padding: 7px 18px; font-size: 12px; }
+.art-playback .button { padding: 7px 18px; font-size: 12px; }
 .proxima-section { border-top: 1px solid var(--line); padding-top: 32px; padding-bottom: 90px; }
 .proxima-feature { display: grid; grid-template-columns: .8fr 1.2fr; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: var(--surface); }
 .proxima-cover { display: block; background: #25150e; }
@@ -161,11 +164,7 @@ body::before {
 .proxima-stills-heading { display: flex; justify-content: space-between; align-items: center; gap: 20px; margin: 40px 0 20px; }
 .proxima-stills-heading h3 { font-size: 22px; font-weight: 500; }
 .proxima-stills-heading p { font-size: 12px; color: var(--muted); }
-.proxima-stills-controls { display: flex; align-items: center; gap: 22px; }
-.proxima-stills { display: flex; gap: 20px; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 18px; scrollbar-color: var(--muted) transparent; }
-.proxima-stills.is-scrolling { scroll-snap-type: none; overflow-anchor: none; }
-.proxima-stills figure { flex: 0 0 44%; min-width: 0; scroll-snap-align: start; }
-.proxima-stills img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 8px; }
+.proxima-gallery img { aspect-ratio: 16 / 9; height: auto; }
 @media (max-width: 1000px) and (min-width: 801px) { .site-nav { gap: 14px; } .header-inner { gap: 16px; } .nav-social { gap: 6px; } }
 @media (max-width: 800px) { .proxima-feature { grid-template-columns: 1fr; } .proxima-cover img { max-height: 500px; object-position: center 40%; } }
 @media (max-width: 700px) {
@@ -178,7 +177,6 @@ body::before {
   .proxima-copy { padding: 24px; }
   .proxima-copy .eyebrow { letter-spacing: .05em; }
   .proxima-stills-heading { align-items: flex-start; flex-direction: column; gap: 10px; }
-  .proxima-stills figure { flex-basis: 86%; }
   .proxima-section { padding-bottom: 52px; }
 }
 
